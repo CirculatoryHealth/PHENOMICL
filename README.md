@@ -78,11 +78,11 @@ Do you have burning questions or do you want to discuss usage with other users? 
 
 ### Citations
 
-Using our **`EntropyMasker`** method? Please cite our work:
+Using our **`PHENOMICL`** method? Please cite our work:
 
-    An automatic entropy method to efficiently mask histology whole-slide images
-    Yipei Song, Francesco Cisternino, Joost Mekke, Gert Jan de Borst, Dominique P.V. de Kleijn, Gerard Pasterkamp, Aryan Vink, Craig Glastonbury, Sander W. van der Laan, Clint L. Miller.
-    medRxiv 2022.09.01.22279487; doi: https://doi.org/10.1101/2022.09.01.22279487
+    Intraplaque haemorrhage quantification and molecular characterisation using attention based multiple instance learning
+    Francesco Cisternino, Yipei Song, Tim S. Peters, Roderick Westerman, Gert J. de Borst, Ernest Diez Benavente, Noortje A.M. van den Dungen, Petra Homoed-van der Kraak, Dominique P.V. de Kleijn, Joost Mekke, Michal Mokry, Gerard Pasterkamp, Hester M. den Ruijter, Evelyn Velema, Clint L. Miller, Craig A. Glastonbury, S.W. van der Laan.
+    medRxiv ; doi: 
 
 
 ### Data availability
