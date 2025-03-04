@@ -1,6 +1,6 @@
 
 import argparse
-from models.model_clam_sum import CLAM_MB, CLAM_SB
+from models.model_clam_sum_tim import CLAM_MB, CLAM_SB
 import torch
 from utils.eval_utils import initiate_model
 from vis_utils.heatmap_utils import slide_to_scaled_pil_image
@@ -19,9 +19,9 @@ SCALE_FACTOR = 16
 # Generic training settings
 parser = argparse.ArgumentParser(description='Configurations for Heatmap Creation')
 # data_root_dir => see files organization in README.md
-parser.add_argument('--model_type', type=str, choices=['clam_sb', 'clam_mb', 'mil'], default='clam_mb', 
+parser.add_argument('--model_type', type=str, choices=['clam_sb', 'clam_mb', 'mil'], default='clam_sb', 
                     help='type of model (default: clam_sb, clam w/ single attention branch)')
-parser.add_argument('--model_size', type=str, choices=['small', 'big', 'dino_version, imagenet'], default='imagenet', help='size of model, does not affect mil')
+parser.add_argument('--model_size', type=str, choices=['small', 'big', 'dino_version', 'imagenet'], default='dino_version', help='size of model, does not affect mil')
 parser.add_argument('--task', type=str, choices=['task_1_tumor_vs_normal',  'task_2_tumor_subtyping', 'wsi_classification', 'wsi_classification_binary', 'wsi_classification_binary_symptoms'], default='wsi_classification_binary')
 parser.add_argument('--subtyping', action='store_true', default=True, 
                      help='subtyping problem')
@@ -79,13 +79,16 @@ def compute_iph(case_id, filename, out_df):
     # model returns logits, Y_prob, Y_hat, A_raw, results_dict
     res = model(torch.from_numpy(features))
     attention_scores = res[3][0]
-    print(f'Probability of IPH: {round(res[1][0][1].item(), 4)}')
+    # print(f'Probability of IPH: {round(res[1][0][1].item(), 4)}') # this is for multiple branch the last [1] is "with IPH",.item() is for transform tensor to scalar
+    print(f'Probability of IPH: {round(res[1][0].item(), 4)}')  #single branch, prob of first sample from a batch with 4 digits precision
     area = (attention_scores > 0).sum() / attention_scores.shape[0]
     print(f'Proxy IPH area: {area}')
-    out_df = out_df.append({'case_id': case_id, 'IPH': (res[1][0][1] > 0.5).numpy(), 'area': ((attention_scores > 0).sum() / attention_scores.shape[0]).numpy()}, ignore_index=True)
+    # out_df = out_df.append({'case_id': case_id, 'IPH': (res[1][0][1] > 0.5).numpy(), 'area': ((attention_scores > 0).sum() / attention_scores.shape[0]).numpy()}, ignore_index=True) #for CLAM_MB
+    out_df = out_df.append({'case_id': case_id, 'Y_prob': res[1][0].detach().numpy() ,'IPH': (res[1][0] > 0.5).numpy(), 'area': ((attention_scores > 0).sum() / attention_scores.shape[0]).numpy()}, ignore_index=True) #single branch
     out_df.to_csv(args.csv_out)
 
-    if SAVE_IMAGES and res[1][0][1].item() > 0.5:
+    # if SAVE_IMAGES and res[1][0][1].item() > 0.5:
+    if SAVE_IMAGES:
         #out_df.to_csv('IPH_area_samples.csv')
         slide = openslide.open_slide(filename)
         # get downscaled version of the slide
@@ -109,6 +112,8 @@ def compute_iph(case_id, filename, out_df):
         arr_min = np.min(logits[mask >= 1])
         arr_max = np.max(logits[mask >= 1])
         arr = (logits - arr_min) / (arr_max - arr_min)
+
+        np.save(f'{args.out_dir}{case_id}_arr.npy', arr)
         # Convert the logits array into heatmap
         cmap = plt.get_cmap('coolwarm')
         rgba = cmap(arr, bytes=True)

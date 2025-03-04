@@ -18,25 +18,29 @@ import os
 import glob
 import random
 
+
 def get_chunk(data_folder, i, num_tasks):
     ROOT_DIR = data_folder
     slides = []
-    tissues_list = os.listdir('./') # os.listdir('/group/glastonbury/GTEX-subset/')
+    tissues_list = os.listdir("./")  # os.listdir('/group/glastonbury/GTEX-subset/')
     for tissue in tissues_list:
-        list = glob.glob(os.path.join(data_folder, tissue, '*.svs'))
+        list = glob.glob(os.path.join(data_folder, tissue, "*.svs"))
         for elem in list:
             slides.append(elem)
-    
-    print('Number of slides:', len(slides), flush=True)
-    slides_per_job = math.ceil(len(slides)/num_tasks)
-    chunks = [slides[x:x+ slides_per_job] for x in range(0, len(slides), slides_per_job )]
+
+    print("Number of slides:", len(slides), flush=True)
+    slides_per_job = math.ceil(len(slides) / num_tasks)
+    chunks = [
+        slides[x : x + slides_per_job] for x in range(0, len(slides), slides_per_job)
+    ]
     if i < len(chunks):
         chunk = chunks[i]
-        print(f'Chunk {i}: {len(chunk)} slides', flush= True)
+        print(f"Chunk {i}: {len(chunk)} slides", flush=True)
     else:
         chunk = []
 
     return chunk
+
 
 def slide_to_scaled_pil_image(slide, SCALE_FACTOR=32):
     """
@@ -55,15 +59,22 @@ def slide_to_scaled_pil_image(slide, SCALE_FACTOR=32):
     img = whole_slide_image.resize((new_w, new_h), PIL.Image.BILINEAR)
     return img, (large_w, large_h, new_w, new_h)
 
-def save_hdf5(output_path, asset_dict, attr_dict= None, mode='a'):
+
+def save_hdf5(output_path, asset_dict, attr_dict=None, mode="a"):
     file = h5py.File(output_path, mode)
     for key, val in asset_dict.items():
         data_shape = val.shape
         if key not in file:
             data_type = val.dtype
-            chunk_shape = (1, ) + data_shape[1:]
-            maxshape = (None, ) + data_shape[1:]
-            dset = file.create_dataset(key, shape=data_shape, maxshape=maxshape, chunks=chunk_shape, dtype=data_type)
+            chunk_shape = (1,) + data_shape[1:]
+            maxshape = (None,) + data_shape[1:]
+            dset = file.create_dataset(
+                key,
+                shape=data_shape,
+                maxshape=maxshape,
+                chunks=chunk_shape,
+                dtype=data_type,
+            )
             dset[:] = val
             if attr_dict is not None:
                 if key in attr_dict.keys():
@@ -72,49 +83,65 @@ def save_hdf5(output_path, asset_dict, attr_dict= None, mode='a'):
         else:
             dset = file[key]
             dset.resize(len(dset) + data_shape[0], axis=0)
-            dset[-data_shape[0]:] = val
+            dset[-data_shape[0] :] = val
     file.close()
     return output_path
 
-def select_random_tiles(idx, num_tasks, TISSUES_DIR = './'): # /group/glastonbury/gtex/gtex_images/*/
+
+def select_random_tiles(
+    idx, num_tasks, TISSUES_DIR="./"
+):  # /group/glastonbury/gtex/gtex_images/*/
     import random
+
     tissues = {}
     slides = []
     for folder in glob.glob(TISSUES_DIR):
-        tissue_name = folder.split('/')[-2]
-        tissue_slides = glob.glob(os.path.join(folder, '*.svs'))
+        tissue_name = folder.split("/")[-2]
+        tissue_slides = glob.glob(os.path.join(folder, "*.svs"))
         random.shuffle(tissue_slides)
         for j in range(5):
             slides.append(tissue_slides[j])
 
-    print('Number of slides:', len(slides), flush=True)
-    slides_per_job = math.ceil(len(slides)/num_tasks)
-    chunks = [slides[x:x+ slides_per_job] for x in range(0, len(slides), slides_per_job )]
+    print("Number of slides:", len(slides), flush=True)
+    slides_per_job = math.ceil(len(slides) / num_tasks)
+    chunks = [
+        slides[x : x + slides_per_job] for x in range(0, len(slides), slides_per_job)
+    ]
     if idx < len(chunks):
         chunk = chunks[idx]
-        print(f'Chunk {idx}: {len(chunk)} slides', flush= True)
+        print(f"Chunk {idx}: {len(chunk)} slides", flush=True)
     else:
         chunk = []
 
     return chunk
 
+
 def get_chunk_wsi(idx, num_tasks, dir):
 
     chunk = []
     slides = []
-    
-    if os.path.exists(os.path.join(dir, '_ndpi')):
-        print('_ndpi found')
-        slides += glob.glob(os.path.join(dir, '_ndpi/*.ndpi'))
-    if os.path.exists(os.path.join(dir, '_tif')):
-        print('_tif found')
-        slides += glob.glob(os.path.join(dir, '_tif/*.TIF'))
 
-    print('Number of slides:', len(slides), flush=True)
-    slides_per_job = math.ceil(len(slides)/num_tasks)
-    chunks = [slides[x:x+ slides_per_job] for x in range(0, len(slides), slides_per_job )]
+    if os.path.exists(os.path.join(dir, "_ndpi")):
+        print("_ndpi found")
+        slides += glob.glob(os.path.join(dir, "_ndpi/*.ndpi"))
+        slides += glob.glob(os.path.join(dir, "_ndpi/_images/*.ndpi"))
+    if os.path.exists(os.path.join(dir, "_tif")):
+        print("_tif found")
+        slides += glob.glob(os.path.join(dir, "_tif/*.TIF"))
+    slides += glob.glob(os.path.join(dir, "_tif/_images/*.TIF"))
+
+    if os.path.exists(os.path.join(dir, "_images_dropzone")):
+        print("_images_dropzone found")
+        slides += glob.glob(os.path.join(dir, "_images_dropzone/*.ndpi"))
+        slides += glob.glob(os.path.join(dir, "_images_dropzone/*.TIF"))
+
+    print("Number of slides:", len(slides), flush=True)
+    slides_per_job = math.ceil(len(slides) / num_tasks)
+    chunks = [
+        slides[x : x + slides_per_job] for x in range(0, len(slides), slides_per_job)
+    ]
     chunk = chunks[idx]
-    print(f'Chunk {idx}: {len(chunk)} slides', flush= True)
+    print(f"Chunk {idx}: {len(chunk)} slides", flush=True)
 
     # debug
     try:
@@ -127,12 +154,14 @@ def get_chunk_wsi(idx, num_tasks, dir):
 
     return chunk
 
+
 def get_coords_h5(filename):
     with h5py.File(filename, "r") as f:
         # get first object name/key; may or may NOT be a group
         coords_group_key = list(f.keys())[0]
         coords = f[coords_group_key][()]  # returns as a numpy array
         return coords
+
 
 # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 # print("+ The MIT License (MIT)                                                                                               +")

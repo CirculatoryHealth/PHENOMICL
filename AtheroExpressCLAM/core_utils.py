@@ -195,9 +195,10 @@ def train(datasets, cur, args):
     else:
         early_stopping = None
     print('Done!', flush=True)
-    loss_fn = nn.CrossEntropyLoss()
-    print('Setting Cross Entropy Loss...', flush=True)
-    
+#    loss_fn = nn.CrossEntropyLoss()
+#    print('Setting Cross Entropy Loss...', flush=True)
+    loss_fn = nn.BCEloss()
+    print('Setting weighted BCE loss...', flush=True)    
 
 
     for epoch in range(args.max_epochs):
@@ -342,7 +343,7 @@ def train_loop(epoch, model, loader, optimizer, n_classes, writer = None, loss_f
         logits, Y_prob, Y_hat, _, _ = model(data)
         
         acc_logger.log(Y_hat, label)
-        loss = loss_fn(Y_prob, label.long())
+        loss = loss_fn(Y_prob, label.float())
         #labels = torch.nn.functional.one_hot(label, num_classes=1).float()
         #loss = focal.sigmoid_focal_loss(logits, labels, reduction = 'sum')
         loss_value = loss.item()

@@ -16,7 +16,7 @@ class Accuracy_Logger(object):
     """Accuracy logger"""
     def __init__(self, n_classes):
         super(Accuracy_Logger, self).__init__()
-        self.n_classes = 2
+        self.n_classes = 5
         self.initialize()
 
     def initialize(self):
@@ -77,7 +77,7 @@ class EarlyStopping:
         if self.best_score is None:
             self.best_score = score2
             self.save_checkpoint(val_loss, tot_acc, model, ckpt_name)
-        elif score2 < self.best_score:
+        elif score2 <= self.best_score:
             self.counter += 1
             print(f'EarlyStopping counter: {self.counter} out of {self.patience}')
             if self.counter >= self.patience and epoch > self.stop_epoch:
@@ -195,8 +195,8 @@ def train(datasets, cur, args):
     else:
         early_stopping = None
     print('Done!', flush=True)
-    loss_fn = nn.CrossEntropyLoss()
-    print('Setting Cross Entropy Loss...', flush=True)
+    loss_fn = nn.BCELoss()
+    print('Setting BCE Loss...', flush=True)
     
 
 
@@ -205,7 +205,7 @@ def train(datasets, cur, args):
         if args.model_type in ['clam_sb', 'clam_mb'] and not args.no_inst_cluster:
             # Train loop for CLAM
             train_loop_clam(epoch, model, train_loader, optimizer, args.n_classes, args.bag_weight, writer, loss_fn)
-            stop, val_loss= validate_clam(cur, epoch, model, val_loader, args.n_classes, 
+            stop, val_loss = validate_clam(cur, epoch, model, val_loader, args.n_classes, 
                 early_stopping, writer, loss_fn, args.results_dir)
 
         else:
@@ -270,7 +270,7 @@ def train_loop_clam(epoch, model, loader, optimizer, n_classes, bag_weight, writ
         # Y_hat is equal to label
         acc_logger.log(Y_hat, label)
         # classification loss
-        loss = loss_fn(Y_prob, label.long())
+        loss = loss_fn(Y_prob, label.float())
 
         #labels = torch.nn.functional.one_hot(label, num_classes=2).float()
 
@@ -293,8 +293,8 @@ def train_loop_clam(epoch, model, loader, optimizer, n_classes, bag_weight, writ
 
         train_loss += loss_value
         if (batch_idx + 1) % 20 == 0:
-            print('batch {}, loss: {:.4f}, instance_loss: {:.4f}, weighted_loss: {:.4f}, '.format(batch_idx, loss_value, instance_loss_value, total_loss.item()) + 
-                'label: {}, bag_size: {}'.format(label.item(), data.size(0)), flush=True)
+            print('batch {}, loss: {:.4f}, instance_loss: {:.4f}, weighted_loss: {:.4f}, Y_prob: {:.4f}, Y_true: {:.4f}'.format(batch_idx, loss_value, instance_loss_value, total_loss.item(), Y_prob.item(), label.item()) + 
+                ', bag_size: {}'.format(data.size(0)), flush=True)
 
         error = calculate_error(Y_hat, label)
         train_error += error
@@ -340,9 +340,9 @@ def train_loop(epoch, model, loader, optimizer, n_classes, writer = None, loss_f
     for batch_idx, (data, label) in enumerate(loader):
         data, label = data.to(device), label.to(device)
         logits, Y_prob, Y_hat, _, _ = model(data)
-        
+
         acc_logger.log(Y_hat, label)
-        loss = loss_fn(Y_prob, label.long())
+        loss = loss_fn(Y_prob, label.float())
         #labels = torch.nn.functional.one_hot(label, num_classes=1).float()
         #loss = focal.sigmoid_focal_loss(logits, labels, reduction = 'sum')
         loss_value = loss.item()
@@ -351,7 +351,7 @@ def train_loop(epoch, model, loader, optimizer, n_classes, writer = None, loss_f
         
         train_loss += loss_value
         if (batch_idx + 1) % 20 == 0:
-            print('batch {}, loss: {:.4f}, label: {}, bag_size: {}'.format(batch_idx, loss_value, label.item(), data.size(0)), flush=True)
+            print('batch {}, loss: {:.4f}, label: {}, bag_size: {}, Y_prob: {}'.format(batch_idx, loss_value, label.item(), data.size(0), Y_prob[0]), flush=True)
            
         error = calculate_error(Y_hat, label)
         train_error += error
@@ -397,7 +397,7 @@ def validate(cur, epoch, model, loader, n_classes, early_stopping = None, writer
 
             acc_logger.log(Y_hat, label)
             
-            loss = loss_fn(Y_prob, label.long())
+            loss = loss_fn(Y_prob, label.float())
 
             prob[batch_idx] = Y_prob.cpu().numpy()
             labels[batch_idx] = label.item()
@@ -472,7 +472,7 @@ def validate_clam(cur, epoch, model, loader, n_classes, early_stopping = None, w
             logits, Y_prob, Y_hat, _, instance_dict = model(data, label=label, instance_eval=True)
             acc_logger.log(Y_hat, label)
             
-            loss = loss_fn(Y_prob, label.long())
+            loss = loss_fn(Y_prob, label.float())
 
             val_loss += loss.item()
 
