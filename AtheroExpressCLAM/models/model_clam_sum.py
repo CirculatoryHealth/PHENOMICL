@@ -74,10 +74,10 @@ args:
     instance_loss_fn: loss function to supervise instance-level training
     subtyping: whether it's a subtyping problem
 """
-class CLAM_SB(nn.Module):
+class AdditiveMIL(nn.Module):
     def __init__(self, gate = True, size_arg = "small", dropout = False, k_sample=8, n_classes=2,
         instance_loss_fn=nn.CrossEntropyLoss(), subtyping=False):
-        super(CLAM_SB, self).__init__()
+        super(AdditiveMIL, self).__init__()
         self.size_dict = {"small": [1024, 512, 256], "big": [1024, 512, 384], "dino_version": [1000, 512, 256]}
         size = self.size_dict[size_arg]
         fc = [nn.Linear(size[0], size[1]), nn.ReLU()]
@@ -89,21 +89,11 @@ class CLAM_SB(nn.Module):
         else:
             attention_net = Attn_Net(L = size[1], D = size[2], dropout = dropout, n_classes = 1)
         fc.append(attention_net)
-        # ATTENTION NETWORK (case "small" configuration):
-        #   LINEAR(1024, 512)  features [K, 1024] => [K, 512]
-        #   RELU
-        #   DROPOUT
-        #   ATTENTION NET (512, 256) => N_CLASSES = 1 for single branch (even in case of multi-class classification)
-        #   SINGLE BRANCH [K, 512] => [K, 256], [K, 256]
-        #   [K, 256] * [K, 256] => [K, 256]
-        #   FINAL LAYER: [K,256] => [K,1] attention matrix for the SINGLE branch
         self.attention_net = nn.Sequential(*fc)
-        # CLASSIFIER
-        #   LINEAR(512, N_CLASSES)
+            
         classifiers = [nn.Linear(size[1], 1)]
         self.classifiers = nn.Sequential(*classifiers)
-        #self.classifiers = nn.Linear(size[1], n_classes)
-        # instance classifiers -> N_CLASSES binary classifiers for the instance clustering
+
         instance_classifiers = [nn.Linear(size[1], 2) for i in range(n_classes)]
         self.instance_classifiers = nn.ModuleList(instance_classifiers)
         self.k_sample = k_sample
