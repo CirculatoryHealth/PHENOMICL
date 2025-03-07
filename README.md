@@ -1,6 +1,6 @@
 ## PHENOMICL: a machine learning model for PHENOtyping of whole-slide images using Multiple InstanCe Learning
 
-[![DOI](https://doi.org/10.1101/2025.03.04.25323316)](https://doi.org/10.1101/2025.03.04.25323316)
+[![DOI](https://zenodo.org/badge/170670605.svg)](https://doi.org/10.5281/zenodo.14990008)
 
 <!-- Please add a brief introduction to explain what the project is about    -->
 Francesco Cisternino<sup>1*</sup>, Yipei Song<sup>2*</sup>, Tim S. Peters<sup>3*</sup>, Roderick Westerman<sup>3</sup>, Gert J. de Borst<sup>4</sup>, Ernest Diez Benavente<sup>3</sup>, Noortje A.M. van den Dungen<sup>3</sup>, Petra Homoed-van der Kraak<sup>5</sup>, Dominique P.V. de Kleijn<sup>4</sup>, Joost Mekke<sup>4</sup>, Michal Mokry<sup>3</sup>, Gerard Pasterkamp<sup>3</sup>, Hester M. den Ruijter<sup>3,6</sup>, Evelyn Velema<sup>6</sup>, Clint L. Miller<sup>2*</sup>, Craig A. Glastonbury<sup>1,7*</sup>, S.W. van der Laan<sup>2,3*</sup>.
@@ -82,7 +82,7 @@ Using our **`PHENOMICL`** method? Please cite our work:
 
     Intraplaque haemorrhage quantification and molecular characterisation using attention based multiple instance learning
     Francesco Cisternino, Yipei Song, Tim S. Peters, Roderick Westerman, Gert J. de Borst, Ernest Diez Benavente, Noortje A.M. van den Dungen, Petra Homoed-van der Kraak, Dominique P.V. de Kleijn, Joost Mekke, Michal Mokry, Gerard Pasterkamp, Hester M. den Ruijter, Evelyn Velema, Clint L. Miller, Craig A. Glastonbury, S.W. van der Laan.
-    medRxiv ; doi: 
+    medRxiv 2025.03.04.25323316; doi: [https://doi.org/10.1101/2025.03.04.25323316](https://doi.org/10.1101/2025.03.04.25323316).
 
 
 ### Data availability
