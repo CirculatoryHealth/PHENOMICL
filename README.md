@@ -82,7 +82,7 @@ Using our **`PHENOMICL`** method? Please cite our work:
 
     Intraplaque haemorrhage quantification and molecular characterisation using attention based multiple instance learning
     Francesco Cisternino, Yipei Song, Tim S. Peters, Roderick Westerman, Gert J. de Borst, Ernest Diez Benavente, Noortje A.M. van den Dungen, Petra Homoed-van der Kraak, Dominique P.V. de Kleijn, Joost Mekke, Michal Mokry, Gerard Pasterkamp, Hester M. den Ruijter, Evelyn Velema, Clint L. Miller, Craig A. Glastonbury, S.W. van der Laan.
-    medRxiv 2025.03.04.25323316; doi: [https://doi.org/10.1101/2025.03.04.25323316](https://doi.org/10.1101/2025.03.04.25323316).
+    medRxiv 2025.03.04.25323316; doi: https://doi.org/10.1101/2025.03.04.25323316.
 
 
 ### Data availability
