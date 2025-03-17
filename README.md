@@ -23,11 +23,43 @@ Despite tremendous medical progress, cardiovascular diseases (CVD) are still top
 
 This work is associated with the [PHENOMICL_downstream](https://github.com/CirculatoryHealth/PHENOMICL_downstream) project.
 
+
 <!-- Please add a brief introduction to explain what the project is about    -->
 
 ### Where do I start?
 
-You can load this project in RStudio by opening the file called 'CONVOCALS.Rproj'.
+## Folder structure
+
+- `scripts`: example bash (driver) scripts to run the pre-processing, training and evaluation.
+- `examples`: example input files.
+- `wsi_preprocessing`: pre-processing scripts.
+- `/AtheroExpressCLAM/iph.py`: scripts for generating visualization of IPH heatmap
+
+## System requirements
+
+Software dependencies and versions are listed in requirements.txt
+
+## Installation
+
+First, clone this git repository: `git clone https://github.com/CirculatoryHealth/PHENOMICL.git`
+
+Then, create a conda environment: `conda create -n phenomicl python=3.6` and activate: `conda activate sequoia`
+
+Install the openslide library: `conda install -c conda-forge openslide`
+
+Install the required package dependencies: `pip install -r requirements.txt`
+
+Finally, install [Openslide](https://openslide.org/download/) (>v3.1.0)
+
+Expected installation time in normal Linux environment: 15 mins 
+
+## Pre-processing
+
+Scripts for pre-processing are located in the `wsi_preprocessing` folder. 
+
+### Step 1: Segmentation
+### Step 2: Patch extraction
+### Step 3: Feature extraction
 
 ### Project structure
 
