@@ -40,37 +40,78 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 Software dependencies and versions are listed in requirements.txt
 
 ## Installation
-First, clone this git repository: `git clone https://github.com/CirculatoryHealth/PHENOMICL.git`
 
-Then, create and activate a conda environment: `conda env create -f phenomicl.yml` and activate: `conda activate phenomicl`
+To get started with **PHENOMICL**, follow these steps to set up your environment and install the required dependencies.
 
-[OPTIONAL] If you have a compatible GPU and want to leverage CUDA for PyTorch, upgrade PyTorch to the GPU version:
+### Step 1: Clone the Repository
+
+Clone the repository to your local machine:
+
 ```bash
-conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch
+git clone https://github.com/CirculatoryHealth/PHENOMICL.git
+cd PHENOMICL
 ```
 
-<!-- Finally, install [Openslide](https://openslide.org/download/) (>v3.1.0)
+### Step 2: Set Up a Conda Environment
 
-Expected installation time in normal Linux environment: 15 mins  -->
+Depending on your hardware, choose one of the following options:
 
-## Pre-processing - Example
+#### For CPU-only Environments:
+```bash
+conda env create -f phenomicl.yml
+conda activate phenomicl
+```
 
-Time required:
-- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~ 1 hour.
-- Lunix server, Rocky8, GPU (CUDA), processing 3 example WSIs: ~ 1 hour.
+#### For GPU (CUDA) Environments:
+```bash
+conda env create -f phenomicl_cuda.yml
+conda activate phenomicl
+```
 
-Scripts for pre-processing are located in the `wsi_preprocessing` folder. 
+### Step 3: Install OpenSlide
 
-### Set working directory
+[OpenSlide](https://openslide.org/download/) (>v3.1.0) is required for processing whole-slide images. Install it using your preferred method:
 
+#### macOS (via Homebrew):
+```bash
+brew install openslide
+```
+
+#### Ubuntu/Debian:
+```bash
+sudo apt-get install openslide-tools
+```
+
+#### Windows:
+Download and install OpenSlide from the [official website](https://openslide.org/download/).
+
+### Step 4: Verify Installation
+
+Ensure all dependencies are installed correctly:
+```bash
+python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
+```
+
+Expected installation time in a typical Linux/macOS environment: ~15 minutes.
+
+---
+
+## Usage
+
+Once the installation is complete, you can start using **PHENOMICL** for pre-processing and running machine learning models on whole-slide images.
+
+### Pre-processing Workflow
+
+#### Step 1: Set the Working Directory
+Define the directory containing your whole-slide images (WSIs):
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are"
 # Example:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/INPUT"
 ```
 
-### Step 1: Segmentation & Patch extraction
-
+#### Step 2: Segmentation and Patch Extraction
+Run the segmentation script to extract patches from WSIs:
 ```bash
 python ./wsi_preprocessing/segmentation.py \
 --slide_dir="${SLIDE_DIR}" \
@@ -79,36 +120,50 @@ python ./wsi_preprocessing/segmentation.py \
 --model ./wsi_preprocessing/PathProfiler/tissue_segmentation/checkpoint_ts.pth
 ```
 
-### Step 3: Feature extraction
-
-Could throw error like: `Permission denied: '<path/to/dir>/.cache/torch'`.
-In that case, please make the torch directory manually
-
+#### Step 3: Feature Extraction
+Extract features from the processed patches:
 ```bash
 python ./wsi_preprocessing/extract_features.py \
--h5_data="${SLIDE_DIR}/PROCESSED/patches/" \
--slide_folder="${SLIDE_DIR}" \
--output_dir="${SLIDE_DIR}/PROCESSED/features/" 
+--h5_data="${SLIDE_DIR}/PROCESSED/patches/" \
+--slide_folder="${SLIDE_DIR}" \
+--output_dir="${SLIDE_DIR}/PROCESSED/features/"
 ```
 
-## Running model - Example
+> **Note:** If you encounter a `Permission denied` error related to Torch cache, manually create the directory:
+> ```bash
+> mkdir -p ~/.cache/torch
+> ```
 
-### Set working directory
+---
+
+### Running the Model
+
+#### Step 1: Set the Working Directory
+Define the directory containing your pre-processed slides:
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are"
 # Example:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE"
 ```
 
-### Running model on pre-processed slides
+#### Step 2: Run the Model
+Run the model on the pre-processed slides to generate predictions and heatmaps:
 ```bash
 python3 ./AtheroExpressCLAM/iph.py \
 --h5_dir="${SLIDE_DIR}/PROCESSED/features/h5_files/" \
 --csv_in="${SLIDE_DIR}/phenomicl_test_set.csv" \
 --csv_out="${SLIDE_DIR}/phenomicl_test_results.csv" \
 --out_dir="${SLIDE_DIR}/heatmaps/" \
---model_checkpoint="${SLIDE_DIR}/MODEL_CHECKPOINT.pt" 
+--model_checkpoint="${SLIDE_DIR}/MODEL_CHECKPOINT.pt"
 ```
+
+---
+
+### Additional Notes
+
+- **Input Data:** Ensure your input WSIs are in the correct format and stored in the specified directory.
+- **Output Data:** Processed data, features, and results will be saved in the respective subdirectories under `SLIDE_DIR/PROCESSED`.
+- **Hardware Requirements:** For optimal performance, use a GPU-enabled environment for large datasets.
 
 
 

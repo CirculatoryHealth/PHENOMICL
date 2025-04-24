@@ -1,0 +1,29 @@
+name: phenomicl
+channels:
+  - nvidia  # For CUDA support
+  - pytorch  # For PyTorch and related packages
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy=1.23.5
+  - scipy
+  - matplotlib
+  - opencv
+  - openslide
+  - h5py
+  - scikit-learn
+  - pandas
+  - pip
+  - pytorch=1.13.1
+  - torchvision=0.14.1
+  - torchaudio=0.13.1
+  - pytorch-cuda=11.6
+  - pip:
+      - openslide-python
+      - tqdm
+      - scikit-image
+      - pillow
+      - torchmetrics
+      - pdbpp
+      - timm
