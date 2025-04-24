@@ -1,0 +1,4 @@
+case_id,slide_id,full_path,label
+AE254,AE254.UMC.CD66b.20170119,<path/to/dir>/PHENOMICL/examples/CD66b/AE254.UMC.CD66b.20170119.ndpi,yes
+AE483,AE483.UMC.CD66b.20170119,<path/to/dir>/PHENOMICL/examples/CD66b/AE483.UMC.CD66b.20170119.ndpi,yes
+AE458,AE458.UMC.CD66b.20170119,<path/to/dir>/PHENOMICL/examples/CD66b/AE458.UMC.CD66b.20170119.ndpi,no

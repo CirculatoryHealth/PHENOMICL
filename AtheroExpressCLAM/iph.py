@@ -12,6 +12,8 @@ import PIL
 import pandas as pd
 from PIL import ImageDraw, ImageFont
 import os
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 SCALE_FACTOR = 16
 
@@ -52,6 +54,12 @@ parser.add_argument(
     type=float,
     default=1.0,
     help="clam: weight coefficient for bag-level loss (default: 0.7)",
+)
+parser.add_argument(
+    "--tile_size",
+    type=int,
+    default=512,
+    help="tile size (eg. 512x512)",
 )
 parser.add_argument(
     "--B",
@@ -124,8 +132,10 @@ def compute_iph(case_id, filename, out_df, gt_label):
 
     with torch.no_grad():
         # model returns logits, Y_prob, Y_hat, A_raw, results_dict
-        # res = model(torch.from_numpy(features).cuda())
-        res = model(torch.from_numpy(features))
+        if torch.cuda.is_available():
+            res = model(torch.from_numpy(features).cuda())
+        else:
+            res = model(torch.from_numpy(features))
 
     # get patch wise scores and multiply them by bag shape
     patch_wise_scores = res[4]["patch_scores"] * features.shape[0]
@@ -139,15 +149,13 @@ def compute_iph(case_id, filename, out_df, gt_label):
     out_df = out_df.append(
         {
             "case_id": case_id,
-            "IPH": (res[1][0] > 0.5).detach().cpu().numpy(),
-            "prob": (res[1][0]).detach().cpu().numpy(),
-            "gt": gt_label == "yes",
-            "min": res[4]["patch_scores"].max().cpu().numpy(),
-            "max": res[4]["patch_scores"].min().cpu().numpy(),
-            "bag_shape": features.shape[0],
-            "area": ((patch_wise_scores > 0.75).sum() / features.shape[0])
+            "IPH_pred": (res[1][0] > 0.5).detach().cpu().numpy(),
+            "IPH_prob": (res[1][0]).detach().cpu().numpy(),
+            "IPH_area": ((patch_wise_scores > 0.75).sum() / features.shape[0])
             .cpu()
             .numpy(),
+            "ground_truth": gt_label == "yes",
+            "bag_shape": features.shape[0]
         },
         ignore_index=True,
     )
@@ -230,6 +238,6 @@ for idx, line in df.iterrows():
     case_id, sample_id, filename, gt_label = line
     # sample_id, filename = line
     print(sample_id)
-    out_df = compute_iph(sample_id, filename, out_df)
+    out_df = compute_iph(sample_id, filename, out_df, gt_label)
     
 out_df.to_csv(args.csv_out)

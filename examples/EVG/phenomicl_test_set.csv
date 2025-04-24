@@ -1,0 +1,4 @@
+case_id,slide_id,full_path,label
+AE254,AE254.EVG,<path/to/dir>/PHENOMICL/examples/EVG/AE254.EVG.TIF,yes
+AE483,AE483.EVG,<path/to/dir>/PHENOMICL/examples/EVG/AE483.EVG.ndpi,yes
+AE458,AE458.EVG,<path/to/dir>/PHENOMICL/examples/EVG/AE458.EVG.ndpi,no

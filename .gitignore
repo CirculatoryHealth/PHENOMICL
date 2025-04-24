@@ -2,6 +2,11 @@
 .*
 !.gitignore
 
+*.csv
+!examples/
+!examples/*.csv
+!examples/**/*.csv
+
 # History files
 .Rhistory
 .Rapp.history
@@ -69,7 +74,6 @@ _gsdata_/
 *.sav
 *.sas7bdat
 *.log
-*.csv
 STAINS
 
 # Results

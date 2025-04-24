@@ -1,0 +1,4 @@
+case_id,slide_id,full_path,label
+AE254,AE254.SMA,<path/to/dir>/PHENOMICL/examples/SMA/AE254.SMA.TIF,yes
+AE483,AE483.SMA,<path/to/dir>/PHENOMICL/examples/SMA/AE483.SMA.TIF,yes
+AE458,AE458.SMA,<path/to/dir>/PHENOMICL/examples/SMA/AE458.SMA.TIF,no

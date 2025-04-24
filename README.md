@@ -35,13 +35,11 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 - `wsi_preprocessing`: pre-processing scripts.
 - `/AtheroExpressCLAM/iph.py`: scripts for generating visualization of IPH heatmap
 
-## System requirements
-
-Software dependencies and versions are listed in requirements.txt
-
 ## Installation
 
 To get started with **PHENOMICL**, follow these steps to set up your environment and install the required dependencies.
+
+Expected installation time in a typical Linux/macOS environment: ~15-20 minutes. Installation steps verified on Macbook Air M1 (CPU version) & Lunix server, Rocky8 (CUDA version).
 
 ### Step 1: Clone the Repository
 
@@ -65,7 +63,13 @@ conda activate phenomicl
 #### For GPU (CUDA) Environments:
 ```bash
 conda env create -f phenomicl_cuda.yml
+mamba env create -f phenomicl_gpu.yml
 conda activate phenomicl
+```
+
+Ensure cuda is installed correctly:
+```bash
+python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
 ```
 
 ### Step 3: Install OpenSlide
@@ -87,12 +91,10 @@ Download and install OpenSlide from the [official website](https://openslide.org
 
 ### Step 4: Verify Installation
 
-Ensure all dependencies are installed correctly:
+Ensure Openslide is installed correctly:
 ```bash
 python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
 ```
-
-Expected installation time in a typical Linux/macOS environment: ~15 minutes.
 
 ---
 
@@ -102,15 +104,36 @@ Once the installation is complete, you can start using **PHENOMICL** for pre-pro
 
 ### Pre-processing Workflow
 
-#### Step 1: Set the Working Directory
-Define the directory containing your whole-slide images (WSIs):
+Time required:
+- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.5 hour.
+- Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
+
+Scripts for pre-processing are located in the `wsi_preprocessing` folder. 
+
+
+#### Step 1: Organize Whole-Slide Images by Stain
+Before proceeding, ensure your whole-slide images (WSIs) are organized into separate folders based on their stain type. For example:
+
 ```bash
-SLIDE_DIR="/full_path_to_where_the_wsi_are"
-# Example:
-# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/INPUT"
+PHENOMICL/examples/HE/
+PHENOMICL/examples/SMA/
 ```
 
-#### Step 2: Segmentation and Patch Extraction
+Each folder should contain WSIs corresponding to the specific stain (e.g., all HE-stained images in the `HE` folder and all SMA-stained images in the `SMA` folder).
+
+#### Step 2: Set the Working Directory
+Define the directory containing your organized WSIs:
+```bash
+SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
+# Examples:
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/"
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/SMA/"
+
+SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE/"
+SLIDE_DIR="/hpc/dhl_ec/tpeters/git_repos/PHENOMICL/examples/HE/"
+```
+
+#### Step 3: Segmentation and Patch Extraction
 Run the segmentation script to extract patches from WSIs:
 ```bash
 python ./wsi_preprocessing/segmentation.py \
@@ -120,13 +143,13 @@ python ./wsi_preprocessing/segmentation.py \
 --model ./wsi_preprocessing/PathProfiler/tissue_segmentation/checkpoint_ts.pth
 ```
 
-#### Step 3: Feature Extraction
+#### Step 4: Feature Extraction
 Extract features from the processed patches:
 ```bash
 python ./wsi_preprocessing/extract_features.py \
---h5_data="${SLIDE_DIR}/PROCESSED/patches/" \
---slide_folder="${SLIDE_DIR}" \
---output_dir="${SLIDE_DIR}/PROCESSED/features/"
+-h5_data="${SLIDE_DIR}/PROCESSED/patches/" \
+-slide_folder="${SLIDE_DIR}" \
+-output_dir="${SLIDE_DIR}/PROCESSED/features/"
 ```
 
 > **Note:** If you encounter a `Permission denied` error related to Torch cache, manually create the directory:
@@ -141,9 +164,10 @@ python ./wsi_preprocessing/extract_features.py \
 #### Step 1: Set the Working Directory
 Define the directory containing your pre-processed slides:
 ```bash
-SLIDE_DIR="/full_path_to_where_the_wsi_are"
-# Example:
-# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE"
+SLIDE_DIR="/full_path_to_where_the_wsi_are/"
+# Examples:
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/"
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/SMA/"
 ```
 
 #### Step 2: Run the Model

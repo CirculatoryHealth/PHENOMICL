@@ -1,0 +1,4 @@
+case_id,slide_id,full_path,label
+AE254,AE254.FIBRIN,<path/to/dir>/PHENOMICL/examples/FIBRIN/AE254.FIBRIN.TIF,yes
+AE483,AE483.FIBRIN,<path/to/dir>/PHENOMICL/examples/FIBRIN/AE483.FIBRIN.TIF,yes
+AE458,AE458.FIBRIN,<path/to/dir>/PHENOMICL/examples/FIBRIN/AE458.FIBRIN.TIF,no
