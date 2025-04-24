@@ -67,7 +67,6 @@ Scripts for pre-processing are located in the `wsi_preprocessing` folder.
 SLIDE_DIR="/full_path_to_where_the_wsi_are"
 # Example:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/INPUT"
-# SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE/INPUT"
 ```
 
 ### Step 1: Segmentation & Patch extraction
