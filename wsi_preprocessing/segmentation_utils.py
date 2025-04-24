@@ -134,6 +134,10 @@ def get_chunk_wsi(idx, num_tasks, dir):
         print("_images_dropzone found")
         slides += glob.glob(os.path.join(dir, "_images_dropzone/*.ndpi"))
         slides += glob.glob(os.path.join(dir, "_images_dropzone/*.TIF"))
+    if os.path.exists(dir):
+        print("Slide dir found: ", dir)
+        slides += glob.glob(f"{dir}/*.ndpi")
+        slides += glob.glob(f"{dir}/*.TIF")
 
     print("Number of slides:", len(slides), flush=True)
     slides_per_job = math.ceil(len(slides) / num_tasks)

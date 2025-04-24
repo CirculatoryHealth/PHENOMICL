@@ -197,7 +197,8 @@ def extract_features(args, chunk):
         dataset = Tiles_Bag(
             slide=slide, tile_size=args.tile_size, transform=transform, h5=h5_file
         )
-        loader = DataLoader(dataset=dataset, batch_size=200, num_workers=2)
+        # loader = DataLoader(dataset=dataset, batch_size=200, num_workers=2)
+        loader = DataLoader(dataset=dataset, batch_size=200, num_workers=0)
 
         mode = "w"
         f = torch.empty(0, 1000)
@@ -268,6 +269,10 @@ if __name__ == "__main__":
         # if args.verbose:
         #     print("VERBOSE <<>> Image folder:", image_folder)
         # files = glob.glob(os.path.join(args.slide_folder, '_images/*.TIF')) + glob.glob(os.path.join(args.slide_folder, '_images/*.ndpi'))
+        if os.path.exists(args.slide_folder):
+            print("Slide dir found: ", args.slide_folder)
+            files += glob.glob(f"{args.slide_folder}/*.ndpi")
+            files += glob.glob(f"{args.slide_folder}/*.TIF")
         if args.verbose:
             print("VERBOSE <<>> Files found:", files)
 

@@ -58,18 +58,22 @@ def load_pretrained_model(args, ckpt_path):
 
 
 def create_model(args):
-   if args.model_type == 'clam_sb':
-       model = CLAM_SB(dropout=args.drop_out, size_arg=args.model_size, n_classes=args.n_classes)
-   elif args.model_type == 'clam_mb':
-       model = CLAM_MB(dropout=args.drop_out, size_arg=args.model_size, n_classes=args.n_classes)
-  # elif args.model_type == 'mil':
-       # Assuming MIL also takes similar arguments
-      # model = MIL_fc(dropout=args.drop_out, n_classes=args.n_classes)
-   else:
-       raise ValueError("Unsupported model type")
+    if args.model_type == "clam_sb":
+        model = CLAM_SB(
+            dropout=args.drop_out, size_arg=args.model_size, n_classes=args.n_classes
+        )
+    elif args.model_type == "clam_mb":
+        model = CLAM_MB(
+            dropout=args.drop_out, size_arg=args.model_size, n_classes=args.n_classes
+        )
+    # elif args.model_type == 'mil':
+    # Assuming MIL also takes similar arguments
+    # model = MIL_fc(dropout=args.drop_out, n_classes=args.n_classes)
+    else:
+        raise ValueError("Unsupported model type")
 
-   model.cuda()  # Move model to CUDA if available
-   return model
+    model.cuda()  # Move model to CUDA if available
+    return model
 
 
 def get_model(args, checkpoint=None):

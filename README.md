@@ -40,26 +40,87 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 Software dependencies and versions are listed in requirements.txt
 
 ## Installation
-
 First, clone this git repository: `git clone https://github.com/CirculatoryHealth/PHENOMICL.git`
 
-Then, create a conda environment: `conda create -n phenomicl python=3.6` and activate: `conda activate sequoia`
+Then, create and activate a conda environment: `conda env create -f phenomicl.yml` and activate: `conda activate phenomicl`
 
-Install the openslide library: `conda install -c conda-forge openslide`
+[OPTIONAL] If you have a compatible GPU and want to leverage CUDA for PyTorch, upgrade PyTorch to the GPU version:
+```bash
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch
+```
 
-Install the required package dependencies: `pip install -r requirements.txt`
+<!-- Finally, install [Openslide](https://openslide.org/download/) (>v3.1.0)
 
-Finally, install [Openslide](https://openslide.org/download/) (>v3.1.0)
+Expected installation time in normal Linux environment: 15 mins  -->
 
-Expected installation time in normal Linux environment: 15 mins 
+## Pre-processing - Example
 
-## Pre-processing
+Time required:
+- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~ 1 hour.
+- Lunix server, Rocky8, GPU (CUDA), processing 3 example WSIs: ~ 1 hour.
 
 Scripts for pre-processing are located in the `wsi_preprocessing` folder. 
 
-### Step 1: Segmentation
-### Step 2: Patch extraction
+### Set working directory
+
+```bash
+SLIDE_DIR="/full_path_to_where_the_wsi_are"
+# Example:
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/INPUT"
+# SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE/INPUT"
+```
+
+### Step 1: Segmentation & Patch extraction
+
+```bash
+python ./wsi_preprocessing/segmentation.py \
+--slide_dir="${SLIDE_DIR}" \
+--output_dir="${SLIDE_DIR}/PROCESSED" \
+--masks_dir="${SLIDE_DIR}/PROCESSED/masks/" \
+--model ./wsi_preprocessing/PathProfiler/tissue_segmentation/checkpoint_ts.pth
+```
+
 ### Step 3: Feature extraction
+
+Could throw error like: `Permission denied: '<path/to/dir>/.cache/torch'`.
+In that case, please make the torch directory manually
+
+```bash
+python ./wsi_preprocessing/extract_features.py \
+-h5_data="${SLIDE_DIR}/PROCESSED/patches/" \
+-slide_folder="${SLIDE_DIR}" \
+-output_dir="${SLIDE_DIR}/PROCESSED/features/" 
+```
+
+## Running model - Example
+
+### Set working directory
+```bash
+SLIDE_DIR="/full_path_to_where_the_wsi_are"
+# Example:
+# SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE"
+# SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE"
+```
+
+### Running model on pre-processed slides
+```bash
+CONVOCALS_DIR="/hpc/dhl_ec/VirtualSlides/Projects/PHENOMICL/AtheroExpressCLAM"
+# CONVOCALS_DIR="/hpc/dhl_ec/tpeters/projects/AtheroExpressCLAM"
+H5_DIR="/hpc/dhl_ec/VirtualSlides/HE/PROCESSED/features_imagenet/h5_files/"
+OUTPUT_DIR="/hpc/dhl_ec/VirtualSlides/HE/heatmaps/iph_fea_sb_heat_csv/"
+CHECKPOINT="/hpc/dhl_ec/fcisternino/CLAM/results/HE_IPH_AtheroExpress_SB_sum_s1/s_0_checkpoint.pt"
+CSV_IN="/hpc/dhl_ec/VirtualSlides/HE/20250414.AEDB_FEA_HE_IPH_with_path.csv"
+CSV_OUT="/hpc/dhl_ec/VirtualSlides/HE/heatmaps/iph_fea_sb_heat.csv"
+
+python3 ./AtheroExpressCLAM/iph.py \
+--h5_dir="${SLIDE_DIR}/PROCESSED/features/h5_files/" \
+--csv_in="${SLIDE_DIR}/phenomicl_test_set.csv" \
+--csv_out="${SLIDE_DIR}/phenomicl_test_results.csv" \
+--out_dir="${SLIDE_DIR}/heatmaps/" \
+--model_checkpoint="${SLIDE_DIR}/MODEL_CHECKPOINT.pt" 
+```
+
+
 
 ### Project structure
 

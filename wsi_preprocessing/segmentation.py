@@ -196,7 +196,7 @@ class SegDataset(Dataset):
         self.subdivisions = subdivisions
         self.totensor = transforms.ToTensor()
         self.normalise = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        self.histeq = CLAHE()
+        # self.histeq = CLAHE()
         self.coordinates = self._extract_patches()
 
     def _extract_patches(self):
@@ -226,7 +226,9 @@ class SegDataset(Dataset):
         ]
 
         # instance norm
-        image = self.histeq(image)
+        # Create CLAHE instance inside __getitem__
+        clahe = CLAHE()
+        image = clahe(image)
 
         # scale between 0 and 1 and swap the dimension
         image = self.totensor(image)
@@ -319,10 +321,10 @@ class TilePrediction(object):
         """
         window_size = effective_window_size
         intersection = int(window_size / 4)
-        wind_outer = (abs(2 * (scipy.signal.triang(window_size))) ** power) / 2
+        wind_outer = (abs(2 * (scipy.signal.windows.triang(window_size))) ** power) / 2
         wind_outer[intersection:-intersection] = 0
 
-        wind_inner = 1 - (abs(2 * (scipy.signal.triang(window_size) - 1)) ** power) / 2
+        wind_inner = 1 - (abs(2 * (scipy.signal.windows.triang(window_size) - 1)) ** power) / 2
         wind_inner[:intersection] = 0
         wind_inner[-intersection:] = 0
 

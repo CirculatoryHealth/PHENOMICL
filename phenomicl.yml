@@ -1,0 +1,28 @@
+name: phenomicl
+channels:
+  - conda-forge
+  - defaults
+  - nvidia  # Added for GPU-related dependencies
+dependencies:
+  - python=3.10
+  - numpy=1.23.5
+  - scipy
+  - matplotlib
+  - opencv
+  - openslide
+  - h5py  # For working with HDF5 files
+  - scikit-learn  # For sklearn modules like label_binarize, roc_auc_score, etc.
+  - pandas  # For working with dataframes
+  - pytorch=1.13.1
+  - pip
+  - pip:
+      - openslide-python
+      - tqdm
+      - scikit-image
+      - torchvision==0.14.1  # Compatible torchvision version
+      - torchaudio==0.13.1
+      - pillow  # For working with images
+      - torchmetrics  # Optional for additional metrics in PyTorch-based models
+      - pdbpp  # For enhanced debugging
+      - timm
+

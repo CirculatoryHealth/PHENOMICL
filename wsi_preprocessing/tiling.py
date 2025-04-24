@@ -148,7 +148,8 @@ def tile_slides(args, chunk):
         # get DataLoader running slow or even freeze, lower the worker number to avoid
         # potential slowness/freeze if necessary.
         # It's just a warning, but perhaps it is good to take note and keep `num_workers=2`
-        tiles_loader = DataLoader(dataset=slide_dataset, batch_size=300, num_workers=2)
+        # tiles_loader = DataLoader(dataset=slide_dataset, batch_size=300, num_workers=2)
+        tiles_loader = DataLoader(dataset=slide_dataset, batch_size=300, num_workers=0)
         # Slidename without file extension
         tissue_name = slidename.split("/")[-2]
 
