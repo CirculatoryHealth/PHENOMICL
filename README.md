@@ -98,19 +98,10 @@ python ./wsi_preprocessing/extract_features.py \
 SLIDE_DIR="/full_path_to_where_the_wsi_are"
 # Example:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE"
-# SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE"
 ```
 
 ### Running model on pre-processed slides
 ```bash
-CONVOCALS_DIR="/hpc/dhl_ec/VirtualSlides/Projects/PHENOMICL/AtheroExpressCLAM"
-# CONVOCALS_DIR="/hpc/dhl_ec/tpeters/projects/AtheroExpressCLAM"
-H5_DIR="/hpc/dhl_ec/VirtualSlides/HE/PROCESSED/features_imagenet/h5_files/"
-OUTPUT_DIR="/hpc/dhl_ec/VirtualSlides/HE/heatmaps/iph_fea_sb_heat_csv/"
-CHECKPOINT="/hpc/dhl_ec/fcisternino/CLAM/results/HE_IPH_AtheroExpress_SB_sum_s1/s_0_checkpoint.pt"
-CSV_IN="/hpc/dhl_ec/VirtualSlides/HE/20250414.AEDB_FEA_HE_IPH_with_path.csv"
-CSV_OUT="/hpc/dhl_ec/VirtualSlides/HE/heatmaps/iph_fea_sb_heat.csv"
-
 python3 ./AtheroExpressCLAM/iph.py \
 --h5_dir="${SLIDE_DIR}/PROCESSED/features/h5_files/" \
 --csv_in="${SLIDE_DIR}/phenomicl_test_set.csv" \
