@@ -105,9 +105,6 @@ python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
 
 Once the installation is complete, you can start using **PHENOMICL** for pre-processing and running machine learning models on whole-slide images.
 
-> [!TIP]
-> After installation, all commands mentioned below can be executed through the command line from the GitHub repository directory. to get there, please use `cd <full/path/to>/PHENOMICL`.
-
 ### Download Segmentation model (Unet) checkpoint
 [Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segmentation checkpoint and place it in the `./examples/` folder.
 
@@ -128,6 +125,8 @@ On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi
 > - Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
 > - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
 
+> [!IMPORTANT]
+> After installation, all commands mentioned below can be executed through the command line from the GitHub repository directory. to get there, please use `cd <full/path/to>/PHENOMICL`.
 
 ### Step 1: Organise Whole-Slide Images by Stain
 Before proceeding, ensure your whole-slide images (WSIs) (ndpi/TIF) are organised into separate folders based on their stain type. For example:
