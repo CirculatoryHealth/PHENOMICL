@@ -67,7 +67,6 @@ conda activate phenomicl
 #### For GPU (CUDA) Environments:
 ```bash
 conda env create -f phenomicl_cuda.yml
-mamba env create -f phenomicl_gpu.yml
 conda activate phenomicl
 ```
 
