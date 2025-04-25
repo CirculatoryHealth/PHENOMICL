@@ -109,10 +109,10 @@ Once the installation is complete, you can start using **PHENOMICL** for pre-pro
 > [!TIP]
 > After installation, all commands mentioned below can be excecuted through the command line from the github repository directory. to get there please use `cd <full/path/to>/PHENOMICL`.
 
-#### Download Segmentation model (Unet) checkpoint
+### Download Segmentation model (Unet) checkpoint
 [Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segementation checkpoint and place it in the `./examples/` folder.
 
-#### Download Example Whole slide images
+### Download Example Whole slide images
 We made 3 WSIs (ndpi/TIF) available for all 9 stain models to test and run the code. These can be downloaded from the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42). To use these WSIs without to much configuration, please place them in the folder as specified in [Step 1 of pre-processing](#step-1-organize-whole-slide-images-by-stain) (Stain type is mentioned in file name of WSI).
 
 Besides the WSIs, other files like: macro images, WSI metadata, and slide thumbnails can be downloaded. These are not neccessary to run the following example.
@@ -123,14 +123,14 @@ On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi
 > Are you using the example WSIs, please update these files to contain the path to this repository directory.
 > - `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
 
-### Pre-processing Workflow
+## Pre-processing Workflow
 > [!NOTE]
 > Time required:
 > - Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
 > - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
 
 
-#### Step 1: Organize Whole-Slide Images by Stain
+### Step 1: Organize Whole-Slide Images by Stain
 Before proceeding, ensure your whole-slide images (WSIs) are organized into separate folders based on their stain type. For example:
 
 ```bash
@@ -141,7 +141,7 @@ PHENOMICL/examples/SMA/
 
 Each folder should contain WSIs corresponding to the specific stain (e.g., all HE-stained images in the `HE` folder and all SMA-stained images in the `SMA` folder).
 
-#### Step 2: Set the Working Directory
+### Step 2: Set the Working Directory
 Define the directory containing your organized WSIs for the stain you want to process. Execute:
 > [!NOTE]
 > We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
@@ -154,7 +154,7 @@ SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
 # ...
 ```
 
-#### Step 3: Segmentation and Patch Extraction
+### Step 3: Segmentation and Patch Extraction
 Run the segmentation script to extract patches from WSIs:
 ```bash
 python ./wsi_preprocessing/segmentation.py \
@@ -164,7 +164,7 @@ python ./wsi_preprocessing/segmentation.py \
 --model ./examples/checkpoint_ts.pth
 ```
 
-#### Step 4: Feature Extraction
+### Step 4: Feature Extraction
 Extract features from the processed patches:
 ```bash
 python ./wsi_preprocessing/extract_features.py \
@@ -181,9 +181,9 @@ python ./wsi_preprocessing/extract_features.py \
 
 ---
 
-### Running the Model
+## Running the Model
 
-#### Step 1: Set the Working Directory
+### Step 1: Set the Working Directory
 Define the directory containing your organized WSIs for the stain you want to process. Execute:
 > [!NOTE]
 > We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
@@ -196,7 +196,7 @@ SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
 # ...
 ```
 
-#### Step 2: Run the Model
+### Step 2: Run the Model
 Run the model on the pre-processed slides to generate predictions and heatmaps:
 ```bash
 python3 ./AtheroExpressCLAM/iph.py \
@@ -207,7 +207,7 @@ python3 ./AtheroExpressCLAM/iph.py \
 --model_checkpoint="${SLIDE_DIR}/MODEL_CHECKPOINT.pt"
 ```
 
-#### Step 3: Check results
+### Step 3: Check results
 After you ran the model, the results can be found in the corresponding stain folder. (e.g. For `HE`, the results will be in `./examples/HE/`).
 - You will find the heatmaps in `./examples/<STAIN>/heatmaps/`.
 - You will find the model results (prediction, probability, area) in `./examples/<STAIN>/phenomicl_test_results.csv`
@@ -215,7 +215,7 @@ After you ran the model, the results can be found in the corresponding stain fol
 
 ---
 
-### Additional Notes
+## Additional Notes
 
 - **Input Data:** Ensure your input WSIs are in the correct format and stored in the specified directory.
 - **Output Data:** Processed data, features, and results will be saved in the respective subdirectories under `SLIDE_DIR/PROCESSED`.
