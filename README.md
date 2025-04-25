@@ -19,7 +19,7 @@ _<sup>7</sup> Nuffield Department of Medicine, University of Oxford, Oxford, UK.
 
 ### Background
 
-Despite tremendous medical progress, cardiovascular diseases (CVD) are still topping global charts of morbidity and mortality. Atherosclerosis is the major underlying cause of CVD and results in atherosclerotic plaque formation. The extent and type of atherosclerosis is manually assessed through histological analysis, and histological characteristics are linked to major acute cardiovascular events (MACE). However, conventional means of assessing plaque characteristics suffer major limitations directly impacting their predictive power. PHENOMICL will use a machine learning method, multiple instance learning (MIL), to develop an internal representation of the 2-dimensional plaque images, allowing the model to learn position and scale in variant structures in the data.  We created a powerful model for image recognition problems using whole-slide images from stained atherosclerotic plaques to predict relevant phenotypes, for example intraplaque haemorrhage.
+Despite tremendous medical progress, cardiovascular diseases (CVD) are still topping global charts of morbidity and mortality. Atherosclerosis is the major underlying cause of CVD and results in atherosclerotic plaque formation. The extent and type of atherosclerosis is manually assessed through histological analysis, and histological characteristics are linked to major acute cardiovascular events (MACE). However, conventional means of assessing plaque characteristics suffer major limitations directly impacting their predictive power. PHENOMICL will use a machine learning method, multiple instance learning (MIL), to develop an internal representation of the 2-dimensional plaque images, allowing the model to learn position and scale in variant structures in the data.  We created a powerful model for image recognition problems using whole-slide images from stained atherosclerotic plaques to predict relevant phenotypes, for example, intraplaque haemorrhage.
 
 This work is associated with the [PHENOMICL_downstream](https://github.com/CirculatoryHealth/PHENOMICL_downstream) project.
 
@@ -34,8 +34,8 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 - `./examples/`: Example input files per stain for the [Usage](#usage) example code. Also contains model checkpoints.
 - `./wsi_preprocessing/`: Pre-processing scripts (segmentation/feature extraction).
 - `./AtheroExpressCLAM/`: Code to run (and train) model.
-    - `iph.py`: Scripts for generating visualization of IPH heatmap.
-    - `main.py`: Main script to train model.
+    - `iph.py`: Scripts for generating visualisation of IPH heatmap.
+    - `main.py`: Main script to train the model.
 
 
 ## Installation
@@ -70,7 +70,7 @@ conda env create -f phenomicl_cuda.yml
 conda activate phenomicl
 ```
 
-Ensure cuda is installed correctly:
+Ensure CUDA is installed correctly:
 ```bash
 python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
 ```
@@ -106,21 +106,21 @@ python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
 Once the installation is complete, you can start using **PHENOMICL** for pre-processing and running machine learning models on whole-slide images.
 
 > [!TIP]
-> After installation, all commands mentioned below can be excecuted through the command line from the github repository directory. to get there please use `cd <full/path/to>/PHENOMICL`.
+> After installation, all commands mentioned below can be executed through the command line from the GitHub repository directory. to get there, please use `cd <full/path/to>/PHENOMICL`.
 
 ### Download Segmentation model (Unet) checkpoint
-[Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segementation checkpoint and place it in the `./examples/` folder.
+[Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segmentation checkpoint and place it in the `./examples/` folder.
 
 ### Download Example Whole slide images
 We made 3 WSIs (ndpi/TIF) available for all 9 stain models to test and run the code. These can be downloaded from the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42). To use these WSIs without to much configuration, please place them in the folder as specified in [Step 1 of pre-processing](#step-1-organize-whole-slide-images-by-stain) (Stain type is mentioned in file name of WSI).
 
-Besides the WSIs, other files like: macro images, WSI metadata, and slide thumbnails can be downloaded. These are not neccessary to run the following example.
+Besides the WSIs, other files like macro images, WSI metadata, and slide thumbnails can be downloaded. These are not necessary to run the following example.
 
 On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42) you can also download example results for the HE stain. These results will correspond with the results you will generate when running the code with the example WSIs.
 
 > [!IMPORTANT]
 > Are you using the example WSIs, please update these files to contain the path to this repository directory.
-> - `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
+> - `./examples/*/phenomicl_test_set.csv`: These files are pre-prepared for use with example WSIs. For each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
 
 ## Pre-processing Workflow
 > [!NOTE]
@@ -129,8 +129,8 @@ On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi
 > - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
 
 
-### Step 1: Organize Whole-Slide Images by Stain
-Before proceeding, ensure your whole-slide images (WSIs) (ndpi/TIF) are organized into separate folders based on their stain type. For example:
+### Step 1: Organise Whole-Slide Images by Stain
+Before proceeding, ensure your whole-slide images (WSIs) (ndpi/TIF) are organised into separate folders based on their stain type. For example:
 
 ```bash
 PHENOMICL/examples/HE/
@@ -141,9 +141,9 @@ PHENOMICL/examples/SMA/
 Each folder should contain WSIs corresponding to the specific stain (e.g., all HE-stained images in the `HE` folder and all SMA-stained images in the `SMA` folder).
 
 ### Step 2: Set the Working Directory
-Define the directory containing your organized WSIs for the stain you want to process. Execute:
+Define the directory containing your organised WSIs for the stain you want to process. Execute:
 > [!NOTE]
-> We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+> We process each stain separately. If you want to process all 9 stains, repeat 9 times for each stain folder.
 
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
@@ -183,9 +183,9 @@ python ./wsi_preprocessing/extract_features.py \
 ## Running the Model
 
 ### Step 1: Set the Working Directory
-Define the directory containing your organized WSIs for the stain you want to process. Execute:
+Define the directory containing your organised WSIs for the stain you want to process. Execute:
 > [!NOTE]
-> We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+> We process each stain separately. If you want to process all 9 stains, repeat 9 times for each stain folder.
 
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
