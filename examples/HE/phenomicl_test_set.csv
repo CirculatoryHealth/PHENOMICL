@@ -1,0 +1,4 @@
+case_id,slide_id,full_path,label
+AE254,AE254.HE,<path/to/dir>/PHENOMICL/examples/HE/AE254.HE.TIF,yes
+AE483,AE483.UMC.HE,<path/to/dir>/PHENOMICL/examples/HE/AE483.UMC.HE.ndpi,yes
+AE458,AE458.UMC.HE,<path/to/dir>/PHENOMICL/examples/HE/AE458.UMC.HE.ndpi,no

@@ -30,10 +30,13 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 
 ## Folder structure
 
-- `scripts`: example bash (driver) scripts to run the pre-processing, training and evaluation.
-- `examples`: example input files.
-- `wsi_preprocessing`: pre-processing scripts.
-- `/AtheroExpressCLAM/iph.py`: scripts for generating visualization of IPH heatmap
+- `./scripts/`: Example bash (driver) scripts to run the pre-processing, training and evaluation.
+- `./examples/`: Example input files per stain for the [Usage](#usage) example code. Also contains model checkpoints.
+- `./wsi_preprocessing/`: Pre-processing scripts (segmentation/feature extraction).
+- `./AtheroExpressCLAM/`: Code to run (and train) model.
+    - `iph.py`: Scripts for generating visualization of IPH heatmap.
+    - `main.py`: Main script to train model.
+
 
 ## Installation
 
@@ -102,13 +105,28 @@ python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
 
 Once the installation is complete, you can start using **PHENOMICL** for pre-processing and running machine learning models on whole-slide images.
 
+[!TIP]
+After installation, all commands mentioned below can be excecuted through the command line from the github repository directory. to get there please use `cd <full/path/to>/PHENOMICL`.
+
+#### Download Segmentation model (Unet) checkpoint
+[Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segementation checkpoint and place it in the `./examples/` folder.
+
+#### Download Example Whole slide images
+We made 3 WSIs (ndpi/TIF) available for all 9 stain models to test and run the code. These can be downloaded from the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42). To use these WSIs without to much configuration, please place them in the folder as specified in [Step 1 of pre-processing](#step-1-organize-whole-slide-images-by-stain) (Stain type is mentioned in file name of WSI).
+
+Besides the WSIs, other files like: macro images, WSI metadata, and slide thumbnails can be downloaded. These are not neccessary to run the following example.
+
+On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42) you can also download example results. These results will correspond with the results you will generate when running the code with the example WSIs.
+
+[!IMPORTANT]
+Are you using the example WSIs, please update these files to contain the path to this repository directory.
+- `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
+
 ### Pre-processing Workflow
 
 Time required:
-- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.5 hour.
+- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
 - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
-
-Scripts for pre-processing are located in the `wsi_preprocessing` folder. 
 
 
 #### Step 1: Organize Whole-Slide Images by Stain
@@ -117,20 +135,22 @@ Before proceeding, ensure your whole-slide images (WSIs) are organized into sepa
 ```bash
 PHENOMICL/examples/HE/
 PHENOMICL/examples/SMA/
+...
 ```
 
 Each folder should contain WSIs corresponding to the specific stain (e.g., all HE-stained images in the `HE` folder and all SMA-stained images in the `SMA` folder).
 
 #### Step 2: Set the Working Directory
-Define the directory containing your organized WSIs:
+Define the directory containing your organized WSIs for the stain you want to process. Execute:
+[!NOTE]
+We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
 # Examples:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/"
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/SMA/"
-
-SLIDE_DIR="/Volumes/Tim's SanDisk Extreme SSD (2TB)/Github/PHENOMICL/examples/HE/"
-SLIDE_DIR="/hpc/dhl_ec/tpeters/git_repos/PHENOMICL/examples/HE/"
+# ...
 ```
 
 #### Step 3: Segmentation and Patch Extraction
@@ -140,7 +160,7 @@ python ./wsi_preprocessing/segmentation.py \
 --slide_dir="${SLIDE_DIR}" \
 --output_dir="${SLIDE_DIR}/PROCESSED" \
 --masks_dir="${SLIDE_DIR}/PROCESSED/masks/" \
---model ./wsi_preprocessing/PathProfiler/tissue_segmentation/checkpoint_ts.pth
+--model ./examples/checkpoint_ts.pth
 ```
 
 #### Step 4: Feature Extraction
@@ -162,12 +182,16 @@ python ./wsi_preprocessing/extract_features.py \
 ### Running the Model
 
 #### Step 1: Set the Working Directory
-Define the directory containing your pre-processed slides:
+Define the directory containing your organized WSIs for the stain you want to process. Execute:
+[!NOTE]
+We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+
 ```bash
-SLIDE_DIR="/full_path_to_where_the_wsi_are/"
+SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
 # Examples:
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/HE/"
 # SLIDE_DIR="</full/path/to>/PHENOMICL/examples/SMA/"
+# ...
 ```
 
 #### Step 2: Run the Model
@@ -180,6 +204,12 @@ python3 ./AtheroExpressCLAM/iph.py \
 --out_dir="${SLIDE_DIR}/heatmaps/" \
 --model_checkpoint="${SLIDE_DIR}/MODEL_CHECKPOINT.pt"
 ```
+
+#### Step 3: Check results
+After you ran the model, the results can be found in the corresponding stain folder. (e.g. For `HE`, the results will be in `./examples/HE/`).
+- You will find the heatmaps in `./examples/<STAIN>/heatmaps/`.
+- You will find the model results (prediction, probability, area) in `./examples/<STAIN>/phenomicl_test_results.csv`
+
 
 ---
 
@@ -265,9 +295,9 @@ The framework was based on the [`WORCS` package](https://osf.io/zcvbs/).
 
 #### Changes log
 
-    Version:      v1.1.0
-    Last update:  2025-03-04
-    Written by:   Francesco Cisternino; Craig Glastonbury; Sander W. van der Laan; Clint L. Miller; Yipei Song.
+    Version:      v1.2.0
+    Last update:  2025-04-25
+    Written by:   Francesco Cisternino; Craig Glastonbury; Sander W. van der Laan; Clint L. Miller; Yipei Song; Tim S. Peters.
     Description:  CONVOCALS repository: classification of atherosclerotic histological whole-slide images
     Minimum requirements: R version 3.4.3 (2017-06-30) -- 'Single Candle', Mac OS X El Capitan
 
@@ -282,6 +312,7 @@ The framework was based on the [`WORCS` package](https://osf.io/zcvbs/).
     _W_
     
     Changes log
+    * v1.2.0 Major Installation/Usage instruction ReadMe update.
     * v1.1.0 Major overhaul, updates and re-organization prior to submission.
     * v1.0.1 Updates and re-organization.
     * v1.0.0 Initial version. 
