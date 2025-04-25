@@ -116,7 +116,7 @@ We made 3 WSIs (ndpi/TIF) available for all 9 stain models to test and run the c
 
 Besides the WSIs, other files like: macro images, WSI metadata, and slide thumbnails can be downloaded. These are not neccessary to run the following example.
 
-On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42) you can also download example results. These results will correspond with the results you will generate when running the code with the example WSIs.
+On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42) you can also download example results for the HE stain. These results will correspond with the results you will generate when running the code with the example WSIs.
 
 > [!IMPORTANT]
 > Are you using the example WSIs, please update these files to contain the path to this repository directory.
