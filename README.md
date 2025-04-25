@@ -130,7 +130,7 @@ On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi
 
 
 ### Step 1: Organize Whole-Slide Images by Stain
-Before proceeding, ensure your whole-slide images (WSIs) are organized into separate folders based on their stain type. For example:
+Before proceeding, ensure your whole-slide images (WSIs) (ndpi/TIF) are organized into separate folders based on their stain type. For example:
 
 ```bash
 PHENOMICL/examples/HE/
