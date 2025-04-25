@@ -42,6 +42,7 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 
 To get started with **PHENOMICL**, follow these steps to set up your environment and install the required dependencies.
 
+[!NOTE]
 Expected installation time in a typical Linux/macOS environment: ~15-20 minutes. Installation steps verified on Macbook Air M1 (CPU version) & Lunix server, Rocky8 (CUDA version).
 
 ### Step 1: Clone the Repository
@@ -123,7 +124,7 @@ Are you using the example WSIs, please update these files to contain the path to
 - `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
 
 ### Pre-processing Workflow
-
+[!NOTE]
 Time required:
 - Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
 - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
