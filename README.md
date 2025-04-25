@@ -42,8 +42,8 @@ This work is associated with the [PHENOMICL_downstream](https://github.com/Circu
 
 To get started with **PHENOMICL**, follow these steps to set up your environment and install the required dependencies.
 
-[!NOTE]
-Expected installation time in a typical Linux/macOS environment: ~15-20 minutes. Installation steps verified on Macbook Air M1 (CPU version) & Lunix server, Rocky8 (CUDA version).
+> [!NOTE]
+> Expected installation time in a typical Linux/macOS environment: ~15-20 minutes. Installation steps verified on Macbook Air M1 (CPU version) & Lunix server, Rocky8 (CUDA version).
 
 ### Step 1: Clone the Repository
 
@@ -106,8 +106,8 @@ python -c "import openslide; print('OpenSlide version:', openslide.__version__)"
 
 Once the installation is complete, you can start using **PHENOMICL** for pre-processing and running machine learning models on whole-slide images.
 
-[!TIP]
-After installation, all commands mentioned below can be excecuted through the command line from the github repository directory. to get there please use `cd <full/path/to>/PHENOMICL`.
+> [!TIP]
+> After installation, all commands mentioned below can be excecuted through the command line from the github repository directory. to get there please use `cd <full/path/to>/PHENOMICL`.
 
 #### Download Segmentation model (Unet) checkpoint
 [Download](https://drive.google.com/file/d/1otWor5WnaJ4W9ynTOF1XS755CsxEa4qj/view?usp=sharing) the Unet segementation checkpoint and place it in the `./examples/` folder.
@@ -119,15 +119,15 @@ Besides the WSIs, other files like: macro images, WSI metadata, and slide thumbn
 
 On the [DataverseNL website](https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/ZODL42) you can also download example results. These results will correspond with the results you will generate when running the code with the example WSIs.
 
-[!IMPORTANT]
-Are you using the example WSIs, please update these files to contain the path to this repository directory.
-- `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
+> [!IMPORTANT]
+> Are you using the example WSIs, please update these files to contain the path to this repository directory.
+> - `./examples/*/phenomicl_test_set.csv`: These files are pre prepared for use of example WSIs. for each stain, please edit the `phenomicl_test_set.csv` file such that the `full_path` column has the full directory path to this repository directory.
 
 ### Pre-processing Workflow
-[!NOTE]
-Time required:
-- Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
-- Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
+> [!NOTE]
+> Time required:
+> - Macbook Air M1, CPU (NO CUDA), processing 3 example WSIs: ~1.25 hour.
+> - Lunix server, Rocky8, Tesla V100-PCIE-16GB GPU (CUDA), processing 3 example WSIs: ~6 minutes.
 
 
 #### Step 1: Organize Whole-Slide Images by Stain
@@ -143,8 +143,8 @@ Each folder should contain WSIs corresponding to the specific stain (e.g., all H
 
 #### Step 2: Set the Working Directory
 Define the directory containing your organized WSIs for the stain you want to process. Execute:
-[!NOTE]
-We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+> [!NOTE]
+> We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
 
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
@@ -173,7 +173,8 @@ python ./wsi_preprocessing/extract_features.py \
 -output_dir="${SLIDE_DIR}/PROCESSED/features/"
 ```
 
-> **Note:** If you encounter a `Permission denied` error related to Torch cache, manually create the directory:
+> [!TIP]
+> If you encounter a `Permission denied` error related to Torch cache, manually create the directory:
 > ```bash
 > mkdir -p ~/.cache/torch
 > ```
@@ -184,8 +185,8 @@ python ./wsi_preprocessing/extract_features.py \
 
 #### Step 1: Set the Working Directory
 Define the directory containing your organized WSIs for the stain you want to process. Execute:
-[!NOTE]
-We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
+> [!NOTE]
+> We pre-process each stain seperately. If you want to process all 9 stains, repeat 9 times for each stain folder.
 
 ```bash
 SLIDE_DIR="/full_path_to_where_the_wsi_are_for_stain/"
