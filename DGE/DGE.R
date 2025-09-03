@@ -1,13 +1,13 @@
 library(tidyverse)
 
 
-df <- read.csv("/home/f.cisternino/IBD/AE_data/HE_samples_IPH_sum_sigmoid_075.csv")
-rnaseq <- read.csv("/home/f.cisternino/IBD/AE_data/AE_rnaseq_vst.csv")
+df <- read.csv(".../HE_samples_IPH_sum_sigmoid_075.csv")
+rnaseq <- read.csv(".../AE_rnaseq_vst.csv")
 #rnaseq[, 2:ncol(rnaseq)] <- log2(rnaseq[, 2:ncol(rnaseq)] + 1e-6)
-metadata <- read.csv("/home/f.cisternino/IBD/AE_data/20230810.CONVOCALS.samplelist.withSMAslides.csv")
+metadata <- read.csv(".../20230810.CONVOCALS.samplelist.withSMAslides.csv")
 metadata$STUDY_NUMBER <- paste0("AE", metadata$STUDY_NUMBER)
 
-exp_metadata <- read.csv("/home/f.cisternino/IBD/AE_data/AE_exp_metadata.csv")
+exp_metadata <- read.csv("...AE_exp_metadata.csv")
 exp_metadata <- subset(exp_metadata, select = -X)
 metadata <- merge(metadata, exp_metadata, by="STUDY_NUMBER")
 
@@ -99,9 +99,6 @@ out_df$symbol = sub("_.*", "", out_df$gene)
 out_df$to_plot <- ifelse(out_df$gene %in% (out_df %>% drop_na(significance) %>%  group_by(significance) %>% slice_max(abs(FoldChange), n=10) %>% pull(gene)), out_df$symbol, NA_character_ )
 
 
-out_df <- read.csv( "/home/f.cisternino/IBD/AE_data/results-plaque-composition/IPH_GLYCC_vst.csv")
-
-
 if (nrow (out_df[abs(out_df$log10_pval) > -log10(0.05) & (out_df$FoldChange > -0.5 & out_df$FoldChange < 0.5),]) > 0){
   out_df[abs(out_df$log10_pval) > -log10(0.05) & (out_df$FoldChange > -0.5 & out_df$FoldChange < 0.5),]$significance <- "US"
 }
@@ -128,8 +125,7 @@ plot = ggplot(out_df, aes(x = FoldChange, y = log10_pval)) +
   theme(legend.position = "none", text = element_text(size=15),panel.grid = element_blank())
   
 #ggsave("/home/f.cisternino/IBD/AE_data/Fig1.pdf", plot=plot, width = 6, height = 7, dpi=300)
-ggsave(paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/", "IPH-GT", ".png"), plot=plot, width = 7, height = 9, dpi=300)
-ggsave(paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/", "GLYCC-F", ".png"), plot=plot, width = 6, height = 6, dpi=300)
+ggsave(paste0(".../results-plaque-composition/", "IPH-GT", ".png"), plot=plot, width = 7, height = 9, dpi=300)
 #ggsave(paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/", "IPH-GT", ".png"), plot=plot, width = 7, height = 9, dpi=300)
 
 
