@@ -7,33 +7,22 @@ rnaseq <- read.csv(".../AE_rnaseq_vst.csv")
 metadata <- read.csv(".../20230810.CONVOCALS.samplelist.withSMAslides.csv")
 metadata$STUDY_NUMBER <- paste0("AE", metadata$STUDY_NUMBER)
 
-exp_metadata <- read.csv("...AE_exp_metadata.csv")
+exp_metadata <- read.csv(".../AE_exp_metadata.csv")
 exp_metadata <- subset(exp_metadata, select = -X)
 metadata <- merge(metadata, exp_metadata, by="STUDY_NUMBER")
 
 colnames(metadata)[colnames(metadata) == "STUDY_NUMBER"] <- "case_id"
 covariates <- metadata[,c("case_id", "Gender", "Age", "StudyName")]
+covariates <- covariates[covariates$Gender %in% c('female'), ]
+
 #covariates <- metadata[,c("case_id", "Gender", "Age", "StudyName", "Symptoms.Update3G")]
 #covariates <- covariates[covariates$Symptoms.Update3G %in% c('Symptomatic', 'Asymptomatic'), ]
 #covariates$symptoms <- as.integer(covariates$Symptoms.Update3G == "Symptomatic")
 
 df$case_id <- sapply(strsplit(df$case_id, "\\."), `[`, 1)
 
-#areas <- df[, c("case_id", "area")]
+areas <- df[, c("case_id", "area")]
 
-iph_gt_label <- df[, c("case_id", "gt")]
-iph_gt_label <- iph_gt_label[iph_gt_label$gt != "Unknown", ]
-iph_gt_label$gt <- factor(iph_gt_label$gt, levels=c("no", "yes"))
-
-#cellprofiler_df <- read.csv("/home/f.cisternino/IBD/AE_data/stains_cellprofiler_output.csv")
-#cp <- cellprofiler_df[, c("SNR", paste0(stain,""), paste0(stain,"_TISSUE"))]
-#colnames(cp) = c("case_id", paste0(stain,""), paste0(stain,"_TISSUE"))
-#cp[stain] <- log2((cp[stain]) + 1) / log2((cp[paste0(stain,"_TISSUE")]) + 1)
-#cp[stain] <- log2((cp[stain]) / (cp[paste0(stain,"_TISSUE")]) + 1)
-
-#boxplot(cp[stain], main="Box Plot of Sample Array", horizontal = TRUE, col="orange")
-
-#combined_df <- merge(df, metadata, by='case_id')
 
 out_df <- data.frame(
   gene = character(),
@@ -50,11 +39,11 @@ for (idx in 1:length(rnaseq[, 1])){
   
   #merged <- merge(cp, tmp, by="case_id")
   #merged <- merge(tmp, covariates, by="case_id")
-  merged <- merge(iph_gt_label, tmp, by="case_id")
+  merged <- merge(areas, tmp, by="case_id")
   merged <- merge(merged, covariates, by="case_id")
   merged <- na.omit(merged)
   
-  formula_string <- paste("exp ~", "gt", "+ Age + Gender + StudyName")
+  formula_string <- paste("exp ~", "area", "+ Age + StudyName")
   # Convert the string into a formula
   model_formula <- as.formula(formula_string)
   
@@ -64,7 +53,7 @@ for (idx in 1:length(rnaseq[, 1])){
   #model <- lm (exp ~ gt + Age + Gender + StudyName, data=merged )
   summary(model)
   
-  new_row <- list(gene = gene_name, coefficient = summary(model)$coefficients["gtyes", "Estimate"], p_val = summary(model)$coefficients["gtyes", "Pr(>|t|)"])
+  new_row <- list(gene = gene_name, coefficient = summary(model)$coefficients["area", "Estimate"], p_val = summary(model)$coefficients["area", "Pr(>|t|)"])
   print(gene_name)
   
   if (idx == 1){
@@ -99,11 +88,14 @@ out_df$symbol = sub("_.*", "", out_df$gene)
 out_df$to_plot <- ifelse(out_df$gene %in% (out_df %>% drop_na(significance) %>%  group_by(significance) %>% slice_max(abs(FoldChange), n=10) %>% pull(gene)), out_df$symbol, NA_character_ )
 
 
+#out_df <- read.csv( "/home/f.cisternino/IBD/AE_data/results-plaque-composition/IPH_GLYCC_vst.csv")
+
+
 if (nrow (out_df[abs(out_df$log10_pval) > -log10(0.05) & (out_df$FoldChange > -0.5 & out_df$FoldChange < 0.5),]) > 0){
   out_df[abs(out_df$log10_pval) > -log10(0.05) & (out_df$FoldChange > -0.5 & out_df$FoldChange < 0.5),]$significance <- "US"
 }
 
-#write.csv(out_df, file = paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/DGE-IPH-GT_vst.csv"), row.names = FALSE)
+write.csv(out_df, file = paste0(".../results-plaque-composition/DGE-IPH-Female.csv"), row.names = FALSE)
 
 
 if (nrow (out_df[abs(out_df$log10_pval) > -log10(0.05) & (out_df$FoldChange > -0.5 & out_df$FoldChange < 0.5),]) > 0){
@@ -125,7 +117,8 @@ plot = ggplot(out_df, aes(x = FoldChange, y = log10_pval)) +
   theme(legend.position = "none", text = element_text(size=15),panel.grid = element_blank())
   
 #ggsave("/home/f.cisternino/IBD/AE_data/Fig1.pdf", plot=plot, width = 6, height = 7, dpi=300)
-ggsave(paste0(".../results-plaque-composition/", "IPH-GT", ".png"), plot=plot, width = 7, height = 9, dpi=300)
+ggsave(paste0(".../results-plaque-composition/", "IPH-Female", ".png"), plot=plot, width = 7, height = 9, dpi=300)
+#ggsave(paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/", "GLYCC-F", ".png"), plot=plot, width = 6, height = 6, dpi=300)
 #ggsave(paste0("/home/f.cisternino/IBD/AE_data/results-plaque-composition/", "IPH-GT", ".png"), plot=plot, width = 7, height = 9, dpi=300)
 
 
